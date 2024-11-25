@@ -99,58 +99,49 @@ docker-compose logs -f
 4. 建议设置服务器监控
 
 
-相关代码引用：
+要删除其他容器，可以使用以下命令：
 
-```6:14:backend/src/config.py
-# 区块链配置
-RPC_URL = os.getenv("RPC_URL", "https://rpc.ankr.com/solana")
-JUPITER_API_BASE = "https://public.jupiterapi.com/v6"
-WALLET_ADDRESS = os.getenv("WALLET_ADDRESS")
+```bash
+# 查看所有容器（包括已停止的）
+docker ps -a
 
-# 扫描配置
-SCAN_INTERVAL = 600  # 10分钟
-ALERT_SCAN_INTERVAL = 180  # 3分钟
-PRICE_CHANGE_THRESHOLD = 100  # 100%
+# 删除指定容器（替换 CONTAINER_ID 为实际容器ID）
+docker rm CONTAINER_ID
+
+# 或者使用容器名称删除
+docker rm 容器名称
 ```
 
 
+如果要强制删除正在运行的容器，可以添加 `-f` 参数：
 
-```88:121:backend/src/scanner.py
-def main():
-    scanner = TokenScanner()
-    
-    while True:
-        try:
-            logger.info("开始扫描钱包代币...")
-            accounts = fetch_tokens()
-            
-            if accounts:
-                has_changes = scanner.check_price_changes(accounts)
-                
-                # 计算并发送总价值
-                total_value_sol = sum(account['value_sol'] for account in accounts)
-                total_tokens = len(accounts)
-                scanner._send_scan_summary(total_value_sol, total_tokens)
-                
-                # 根据是否有显著变化调整扫描间隔
-                if has_changes and not scanner.alert_mode:
-                    logger.info("检测到显著价格变化，切换到快速扫描模式")
-                    scanner.alert_mode = True
-                elif not has_changes and scanner.alert_mode:
-                    logger.info("价格趋于稳定，恢复常规扫描间隔")
-                    scanner.alert_mode = False
-                
-                interval = ALERT_SCAN_INTERVAL if scanner.alert_mode else SCAN_INTERVAL
-                logger.info(f"等待 {interval} 秒后进行下一次扫描...")
-                time.sleep(interval)
-            else:
-                logger.warning("未获取到代币信息，1分钟后重试...")
-                time.sleep(60)
-                
-        except Exception as e:
-            logger.error(f"扫描出错: {str(e)}")
-            time.sleep(60)  # 出错后等待1分钟再试
+```bash
+docker rm -f CONTAINER_ID
 ```
+
+
+在我们的项目中，根据 `docker-compose.yml` 配置：
+
+
+```3:8:docker-compose.yml
+services:
+  scanner:
+    build: .
+      context: .
+      dockerfile: Dockerfile
+    container_name: sol_token_scanner
+```
+
+
+我们只定义了一个名为 `sol_token_scanner` 的容器。如果有其他容器，可以直接删除：
+
+```bash
+# 删除其他容器，保留 sol_token_scanner
+docker rm -f $(docker ps -a | grep -v "sol_token_scanner" | awk 'NR>1 {print $1}')
+```
+
+
+删除后可以使用 `docker ps -a` 确认是否只剩下 `sol_token_scanner` 容器。
 
 
 这个部署文档包含了完整的部署流程和维护指南，让用户可以轻松部署和维护服务。

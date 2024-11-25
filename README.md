@@ -1,62 +1,93 @@
-# 钱包地址代币价格异动监测服务
+# SOL 代币价格异动监测服务
 
-## 背景
+## 项目介绍
 
-有的meme代币，买入之后就归零了，但是某个时候可能会突然价值暴涨，如果不能及时查看钱包可能会错失第二次高价卖出的机会，所以我们需要开发一个平台，通过一定方式扫描钱包地址里面持有的代币价格异动。
+一个基于 Python 的自动化监控服务，用于监测 Solana 钱包中代币的价格变动。当代币价格发生显著变化时，通过 Telegram 机器人发送提醒通知。
 
-## 功能设计
+## 主要功能
 
-- 输入：
-  - 钱包地址
-  - 监测规则
-- 输出：
-  - 邮件提醒
-  - telegram bot提醒
-  - 飞书bot提醒
+- 自动扫描指定钱包地址的所有代币
+- 实时监控代币价格变动
+- 价格异动自动提醒（支持 Telegram）
+- 定期发送钱包代币总览报告
+- 支持代理配置
 
-## 监测扫描规则
+## 监测规则
 
-- 当前代币价格较上次价格涨幅超过100%则记录并发生提醒
-- 每隔15分钟进行一次价格扫描 如有异动则3分钟进行一次价格扫描
-- 只扫描钱包持有的代币合约地址对应价格
+- 基础扫描间隔：10分钟
+- 异动扫描间隔：3分钟（检测到价格变动时）
+- 价格变动阈值：100%（可配置）
+- 最小代币价值：0.01 SOL（过滤dust）
 
-## 技术栈
+## 技术架构
 
-- 使用python
-- 使用jup api
+- 后端：Python 3.8
+- 容器化：Docker & Docker Compose
+- API：Jupiter API、Raydium API
+- 通知：Telegram Bot API
 
-## 项目架构
+## 快速开始
 
-```
-tree
-├── docs/ # 项目文档
-├── frontend/ # 前端代码
-│ ├── src/
-│ ├── public/
-│ └── package.json
-├── backend/ # 后端代码
-│ ├── src/
-│ ├── tests/
-│ └── requirements.txt
-└── README.md
-```
-
-
-## 获取 Telegram Chat ID
-
-1. 首先在 Telegram 中搜索并添加您的机器人
-2. 向机器人发送一条消息（比如 `/start`）
-3. 执行以下命令获取 chat_id：
-
+1. 克隆项目并进入目录
 ```bash
-# 安装 jq 工具
-yum install -y jq
-
-# 获取 chat_id（替换 YOUR_BOT_TOKEN 为您的机器人 token）
-curl https://api.telegram.org/botYOUR_BOT_TOKEN/getUpdates | jq '.result[0].message.chat.id'
+git clone <repository_url>
+cd SolTokenValueAlert
 ```
 
-4. 将获取到的 chat_id 填入 `.env` 文件的 `TELEGRAM_CHAT_ID` 字段
+2. 配置环境变量（在 backend 目录下创建 .env 文件）
+```env
+# 必需配置
+RPC_URL=https://rpc.ankr.com/solana
+WALLET_ADDRESS=你的钱包地址
+TELEGRAM_BOT_TOKEN=你的Telegram机器人token
+TELEGRAM_CHAT_ID=你的Telegram聊天ID
+
+# 可选配置（如需代理）
+PROXY_HOST=127.0.0.1
+PROXY_PORT=7890
 ```
 
-这样可以在创建环境变量文件之前，先指导用户如何获取正确的 chat_id。
+3. 使用 Docker 部署
+```bash
+docker-compose up -d
+```
+
+## 项目结构
+```
+SolTokenValueAlert/
+├── backend/
+│   ├── src/
+│   │   ├── scanner.py    # 主扫描程序
+│   │   ├── token_fetcher.py  # 代币数据获取
+│   │   ├── notification.py   # 通知服务
+│   │   └── config.py    # 配置管理
+│   └── requirements.txt
+├── docker-compose.yml
+└── Dockerfile
+```
+
+## 部署文档
+
+详细的部署和配置说明请参考：
+- [部署指南](Deploy.md)
+- [VPS环境搭建](VPSREADME.md)
+
+## 注意事项
+
+1. 确保 Telegram Bot 已正确配置并已启动
+2. 建议使用稳定的 RPC 节点
+3. 如果使用代理，需要正确配置代理环境变量
+4. 定期检查日志确保服务正常运行
+
+## 许可证
+
+MIT License
+
+
+## 更新信息 24/11/25：
+
+1. 更准确地反映了当前项目的实际功能
+2. 添加了详细的配置说明
+3. 更新了项目结构以匹配实际代码
+4. 添加了快速开始指南
+5. 移除了尚未实现的功能（如邮件和飞书通知）
