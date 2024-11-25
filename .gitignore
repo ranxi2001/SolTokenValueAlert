@@ -6,3 +6,4 @@
 /backend/logs
 /backend/tmp
 /alert
+/backend/src/__pycache__

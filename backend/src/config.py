@@ -32,3 +32,9 @@ SOLSCAN_API_KEY = os.getenv("SOLSCAN_API_KEY")
 
 # Raydium API 配置
 RAYDIUM_API_BASE = "https://api-v3.raydium.io"
+
+# 钉钉配置
+DINGTALK_CLIENT_ID = os.getenv("DINGTALK_CLIENT_ID")
+DINGTALK_CLIENT_SECRET = os.getenv("DINGTALK_CLIENT_SECRET")
+# 从环境变量中获取钉钉访问令牌
+DINGTALK_ACCESS_TOKEN = os.getenv('DINGTALK_ACCESS_TOKEN')

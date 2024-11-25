@@ -3,7 +3,7 @@ import logging
 from typing import Dict, List
 from token_fetcher import TokenFetcher, main as fetch_tokens
 from config import SCAN_INTERVAL, ALERT_SCAN_INTERVAL, PRICE_CHANGE_THRESHOLD
-from notification import TelegramNotifier
+from notification import TelegramNotifier, DingTalkNotifier
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -15,6 +15,7 @@ class TokenScanner:
         self.last_total_value_sol: float = 0
         self.alert_mode = False
         self.telegram = TelegramNotifier()
+        self.dingtalk = DingTalkNotifier()
         
     def check_price_changes(self, accounts: List[dict]) -> bool:
         """检查价格变化并返回是否有显著变化"""
@@ -50,6 +51,7 @@ class TokenScanner:
     
     def _send_price_alert(self, account: dict, price_change: float):
         """发送价格变动提醒"""
+        # 发送 Telegram 通知
         change_direction = "上涨" if price_change > 0 else "下跌"
         message = (
             f"<b>代币价格{change_direction}提醒!</b>\n\n"
@@ -63,6 +65,10 @@ class TokenScanner:
         )
         logger.info("\n" + message)
         self.telegram.send_message(message)
+        
+        # 只在价格上涨超过100%时发送钉钉通知
+        if price_change >= 100:
+            self.dingtalk.send_price_alert(account, price_change)
     
     def _send_total_value_alert(self, current_value: float, value_change: float):
         """发送总价值变动提醒"""

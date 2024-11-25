@@ -17,6 +17,9 @@ WALLET_ADDRESS=你的钱包地址
 TELEGRAM_BOT_TOKEN=你的Telegram机器人token
 TELEGRAM_CHAT_ID=你的Telegram聊天ID
 
+# 钉钉配置（可选）
+DINGTALK_ACCESS_TOKEN=你的钉钉机器人访问令牌
+
 # 代理配置（如果需要）
 PROXY_HOST=127.0.0.1
 PROXY_PORT=7890
