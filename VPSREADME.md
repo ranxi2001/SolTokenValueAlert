@@ -33,17 +33,6 @@ source alert/bin/activate
 # 升级 pip
 pip install --upgrade pip
 
-# 创建 requirements.txt
-cat > requirements.txt << EOF
-python-dotenv
-requests
-web3
-aiohttp
-construct
-solana
-base58
-EOF
-
 # 安装项目依赖
 pip install -r requirements.txt
 ```
