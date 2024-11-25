@@ -1,11 +1,18 @@
-version: '3'
+version: '3.8'
 
 services:
   scanner:
-    build: .
-    container_name: sol-token-scanner
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sol_token_scanner
     volumes:
-      - ./backend/.env:/app/.env
-    restart: always
+      - ./backend:/app/backend
     environment:
-      - TZ=Asia/Shanghai 
+      - TZ=Asia/Shanghai
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "3"
