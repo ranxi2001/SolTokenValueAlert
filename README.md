@@ -59,12 +59,4 @@ curl https://api.telegram.org/botYOUR_BOT_TOKEN/getUpdates | jq '.result[0].mess
 4. 将获取到的 chat_id 填入 `.env` 文件的 `TELEGRAM_CHAT_ID` 字段
 ```
 
-这部分内容建议插入到 `VPSREADME.md` 的这个位置：
-
-````58:59:VPSREADME.md
-# 创建环境变量文件
-```
-
-
-
 这样可以在创建环境变量文件之前，先指导用户如何获取正确的 chat_id。
