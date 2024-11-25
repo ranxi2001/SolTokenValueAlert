@@ -1,3 +1,5 @@
+multidict
+aiohttp
 web3
 requests
 python-dotenv

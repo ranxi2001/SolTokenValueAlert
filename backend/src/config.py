@@ -27,24 +27,8 @@ NOTIFICATION_EMAIL = os.getenv("NOTIFICATION_EMAIL")
 # 飞书配置
 FEISHU_WEBHOOK_URL = os.getenv("FEISHU_WEBHOOK_URL")
 
-# 代理配置
-PROXY_HOST = "127.0.0.1"  # Clash 默认地址
-PROXY_PORT = "7890"       # Clash 默认端口
-PROXIES = {
-    "http": f"socks5h://{PROXY_HOST}:{PROXY_PORT}",
-    "https": f"socks5h://{PROXY_HOST}:{PROXY_PORT}"
-}
-
 # Solscan API 配置
 SOLSCAN_API_KEY = os.getenv("SOLSCAN_API_KEY")
 
 # Raydium API 配置
 RAYDIUM_API_BASE = "https://api-v3.raydium.io"
-
-# Telegram专用代理配置
-TELEGRAM_PROXY_HOST = "127.0.0.1"  # Clash 默认地址
-TELEGRAM_PROXY_PORT = "7890"       # Clash 默认端口
-TELEGRAM_PROXIES = {
-    "http": f"socks5h://{TELEGRAM_PROXY_HOST}:{TELEGRAM_PROXY_PORT}",
-    "https": f"socks5h://{TELEGRAM_PROXY_HOST}:{TELEGRAM_PROXY_PORT}"
-}

@@ -7,7 +7,7 @@ from base58 import b58decode
 from dotenv import load_dotenv
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Dict, Optional
-from config import PROXIES, RPC_URL, WALLET_ADDRESS, JUPITER_API_BASE, SOLSCAN_API_KEY
+from config import RPC_URL, WALLET_ADDRESS, JUPITER_API_BASE, SOLSCAN_API_KEY
 import urllib3
 import time
 
@@ -201,7 +201,6 @@ class TokenFetcher:
                 RPC_URL, 
                 json=payload, 
                 headers=headers,
-                proxies=PROXIES,
                 timeout=30
             )
             response_data = response.json()
@@ -304,7 +303,7 @@ class TokenFetcher:
                             except (ValueError, TypeError):
                                 logger.warning(f"代币 {mint_address} 价格格式无效")
                         else:
-                            logger.info(f"代币 {mint_address} 在Raydium上没有价格数据")
+                            logger.info(f"代币 {mint_address} 在Raydium上没有价���数据")
                 
                 return prices
                 

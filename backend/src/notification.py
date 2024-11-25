@@ -1,19 +1,20 @@
 import logging
 import requests
-from config import TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID, TELEGRAM_PROXIES
+from config import TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
 
 logger = logging.getLogger(__name__)
 
 class TelegramNotifier:
     def __init__(self):
+        if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
+            logger.error("Telegram配置缺失")
+            raise ValueError("请在.env文件中配置TELEGRAM_BOT_TOKEN和TELEGRAM_CHAT_ID")
+            
         self.bot_token = TELEGRAM_BOT_TOKEN
         self.chat_id = TELEGRAM_CHAT_ID
         self.base_url = f"https://api.telegram.org/bot{self.bot_token}"
-        self.session = requests.Session()
-        self.session.proxies.update(TELEGRAM_PROXIES)
-        self.session.verify = False
-    
-    def send_message(self, message: str) -> bool:
+
+    def send_message(self, message: str):
         """发送Telegram消息"""
         try:
             url = f"{self.base_url}/sendMessage"
@@ -22,17 +23,15 @@ class TelegramNotifier:
                 "text": message,
                 "parse_mode": "HTML"
             }
-            
-            response = self.session.post(url, data=data)
+            response = requests.post(url, json=data, timeout=10)
             response.raise_for_status()
             
-            if response.status_code == 200:
-                logger.info("Telegram消息发送成功")
-                return True
-            else:
-                logger.error(f"Telegram消息发送失败: {response.text}")
-                return False
+            if not response.json().get('ok'):
+                error_msg = response.json().get('description', '未知错误')
+                logger.error(f"Telegram API返回错误: {error_msg}")
+                raise Exception(error_msg)
                 
-        except Exception as e:
+        except requests.exceptions.RequestException as e:
             logger.error(f"发送Telegram消息时出错: {str(e)}")
-            return False 
+            if hasattr(e.response, 'text'):
+                logger.error(f"错误详情: {e.response.text}") 

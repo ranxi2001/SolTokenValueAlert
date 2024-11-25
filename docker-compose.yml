@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+  scanner:
+    build: .
+    container_name: sol-token-scanner
+    volumes:
+      - ./backend/.env:/app/.env
+    restart: always
+    environment:
+      - TZ=Asia/Shanghai 
