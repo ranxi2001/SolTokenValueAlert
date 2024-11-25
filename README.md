@@ -41,3 +41,30 @@ tree
 └── README.md
 ```
 
+
+## 获取 Telegram Chat ID
+
+1. 首先在 Telegram 中搜索并添加您的机器人
+2. 向机器人发送一条消息（比如 `/start`）
+3. 执行以下命令获取 chat_id：
+
+```bash
+# 安装 jq 工具
+yum install -y jq
+
+# 获取 chat_id（替换 YOUR_BOT_TOKEN 为您的机器人 token）
+curl https://api.telegram.org/botYOUR_BOT_TOKEN/getUpdates | jq '.result[0].message.chat.id'
+```
+
+4. 将获取到的 chat_id 填入 `.env` 文件的 `TELEGRAM_CHAT_ID` 字段
+```
+
+这部分内容建议插入到 `VPSREADME.md` 的这个位置：
+
+````58:59:VPSREADME.md
+# 创建环境变量文件
+```
+
+
+
+这样可以在创建环境变量文件之前，先指导用户如何获取正确的 chat_id。
